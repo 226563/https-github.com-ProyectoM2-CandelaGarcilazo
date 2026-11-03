@@ -1,0 +1,407 @@
+openapi: 3.0.3
+info:
+  title: MiniBlog API
+  description: API REST para administrar autores y publicaciones.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+tags:
+  - name: Health
+  - name: Authors
+  - name: Posts
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Comprobar que la API está activa
+      responses:
+        '200':
+          description: La API está funcionando.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /authors:
+    get:
+      tags: [Authors]
+      summary: Listar autores
+      responses:
+        '200':
+          description: Lista de autores.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Authors]
+      summary: Crear un autor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+      responses:
+        '201':
+          description: Autor creado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          description: Datos inválidos o email ya registrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /authors/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Authors]
+      summary: Obtener un autor por ID
+      responses:
+        '200':
+          description: Autor encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          description: Autor no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags: [Authors]
+      summary: Actualizar un autor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+      responses:
+        '200':
+          description: Autor actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          description: ID, datos inválidos o email ya registrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Autor no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Authors]
+      summary: Eliminar un autor
+      description: La eliminación también elimina sus publicaciones asociadas por cascada.
+      responses:
+        '204':
+          description: Autor eliminado; la respuesta no tiene cuerpo.
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          description: Autor no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: Listar publicaciones
+      responses:
+        '200':
+          description: Lista de publicaciones.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Posts]
+      summary: Crear una publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInput'
+      responses:
+        '201':
+          description: Publicación creada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Datos inválidos o el autor indicado no existe.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /posts/author/{authorId}:
+    parameters:
+      - name: authorId
+        in: path
+        required: true
+        description: ID entero positivo del autor.
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      tags: [Posts]
+      summary: Listar publicaciones de un autor
+      description: Cada publicación incluye campos con los datos del autor.
+      responses:
+        '200':
+          description: Publicaciones del autor; puede ser una lista vacía.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostWithAuthor'
+        '400':
+          description: ID de autor inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /posts/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Posts]
+      summary: Obtener una publicación por ID
+      responses:
+        '200':
+          description: Publicación encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          description: Publicación no encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags: [Posts]
+      summary: Actualizar una publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInput'
+      responses:
+        '200':
+          description: Publicación actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Datos inválidos o el autor indicado no existe.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Publicación no encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Posts]
+      summary: Eliminar una publicación
+      responses:
+        '204':
+          description: Publicación eliminada; la respuesta no tiene cuerpo.
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          description: Publicación no encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: ID entero positivo del recurso.
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    InvalidId:
+      description: El ID debe ser un entero positivo.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Error interno del servidor.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Author:
+      type: object
+      required: [id, name, email, created_at]
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Candela
+        email:
+          type: string
+          example: cande@example.com
+        bio:
+          type: string
+          nullable: true
+          example: Estudiante de desarrollo
+        created_at:
+          type: string
+          format: date-time
+    AuthorInput:
+      type: object
+      required: [name, email]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: Candela
+        email:
+          type: string
+          minLength: 1
+          example: cande@example.com
+        bio:
+          type: string
+          nullable: true
+          example: Estudiante de desarrollo
+    Post:
+      type: object
+      required: [id, title, content, author_id, published, created_at]
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Aprendiendo PostgreSQL
+        content:
+          type: string
+          example: Introducción a bases de datos
+        author_id:
+          type: integer
+          example: 1
+        published:
+          type: boolean
+          default: false
+          example: true
+        created_at:
+          type: string
+          format: date-time
+    PostInput:
+      type: object
+      required: [title, content, author_id]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: Aprendiendo PostgreSQL
+        content:
+          type: string
+          minLength: 1
+          example: Introducción a bases de datos
+        author_id:
+          type: integer
+          minimum: 1
+          example: 1
+        published:
+          type: boolean
+          default: false
+          example: false
+    PostWithAuthor:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          required: [author_name, author_email, author_bio]
+          properties:
+            author_name:
+              type: string
+              example: Candela
+            author_email:
+              type: string
+              example: cande@example.com
+            author_bio:
+              type: string
+              nullable: true
+              example: Estudiante de desarrollo
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: El recurso solicitado no existe
