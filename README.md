@@ -151,14 +151,14 @@ Las pruebas usan Jest y Supertest. La conexión con PostgreSQL se simula, por lo
 
 ## Despliegue
 
-- Plataforma prevista: Railway.
-- Estado: pendiente hasta que el servicio esté disponible.
-- URL de producción: completar después del despliegue.
+- Plataforma: Render.
+- Estado: desplegada.
+- URL de producción: https://miniblog-zhn4.onrender.com
 
-Al desplegar, configurar las variables de entorno en la plataforma y no publicar credenciales en el repositorio.
+La API usa PostgreSQL. Las variables de conexión se configuran en Render y no deben publicarse en el repositorio.
 
 ## Autoría
 
 - Nombre: Candela Garcilazo
-- Institución: HENRY
-- Fecha: 2/11/2026
+- Proyecto integrador M2
+- Fecha: 11/2026

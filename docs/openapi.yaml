@@ -4,8 +4,8 @@ info:
   description: API REST para administrar autores y publicaciones.
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
-    description: Servidor local
+  - url:  https://miniblog-zhn4.onrender.com
+    description: Servidor de producción (Render)
 tags:
   - name: Health
   - name: Authors
