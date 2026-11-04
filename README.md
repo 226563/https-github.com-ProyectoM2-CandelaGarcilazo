@@ -149,6 +149,12 @@ npm test
 
 Las pruebas usan Jest y Supertest. La conexión con PostgreSQL se simula, por lo que la suite no modifica los datos de la base local.
 
+## Uso de inteligencia artificial
+
+Utilicé ChatGPT como herramienta de apoyo durante el desarrollo para comprender conceptos, recibir orientación sobre endpoints CRUD, preparar pruebas con Jest y Supertest, documentar la API con OpenAPI/Swagger y resolver dudas sobre la configuración y el despliegue en Render.
+
+Revisé e integré las sugerencias en el proyecto y comprobé el funcionamiento mediante las pruebas automatizadas y consultas a la API desplegada.
+
 ## Despliegue
 
 - Plataforma: Render.
